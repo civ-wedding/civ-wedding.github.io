@@ -1,0 +1,21 @@
+{
+  "name": "save-the-date",
+  "version": "0.0.1",
+  "authors": [
+    "Chris Joel <chris@scriptolo.gy>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "threejs": "*",
+    "core-ajax": "polymer/core-ajax#0.8-pre-rc-port",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#~0.5.5",
+    "paper-button": "polymer/paper-button#0.8-initial-port"
+  }
+}
