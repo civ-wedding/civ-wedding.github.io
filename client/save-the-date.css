@@ -17,3 +17,8 @@ body {
   padding: 0;
 }
 
+canvas {
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+  cursor: grab;
+}
