@@ -34,6 +34,11 @@ gulp.task('vulcanize', ['transform-client', 'copy-client'], function () {
     .pipe(gulp.dest('dist'));
 });
 
+gulp.task('copy-textures-for-deploy', function () {
+  return gulp.src('dist/client/*.png')
+    .pipe(gulp.dest('dist'));
+});
+
 gulp.task('clean', function () {
   return gulp.src([
       'dist/client/**/*',
@@ -44,13 +49,15 @@ gulp.task('clean', function () {
     .pipe(clean());
 });
 
-gulp.task('watch', ['build'], function () {
-  gulp.watch(['client/**/*'], ['build']);
+gulp.task('watch', function () {
+  gulp.watch(['client/**/*'], ['build-dev']);
 });
 
-gulp.task('build', ['transform-client', 'copy-client'], function() {
+gulp.task('build-dev', ['transform-client', 'copy-client'], function() {
   return gulp.src('dist/**/*')
     .pipe(connect.reload());
 });
 
-gulp.task('default', ['clean', 'build', 'server', 'watch']);
+gulp.task('build-prod', ['copy-textures-for-deploy', 'vulcanize'])
+
+gulp.task('default', ['clean', 'build-dev', 'server', 'watch']);

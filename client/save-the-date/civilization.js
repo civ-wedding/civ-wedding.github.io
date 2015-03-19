@@ -13,7 +13,7 @@ class Ocean {
   }
 
   get geometry () {
-    return new THREE.PlaneGeometry(50, 50);
+    return new THREE.PlaneBufferGeometry(50, 50);
   }
 }
 

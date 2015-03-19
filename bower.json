@@ -14,7 +14,7 @@
   ],
   "dependencies": {
     "threejs": "*",
-    "core-ajax": "polymer/core-ajax#0.8-pre-rc-port",
+    "core-ajax": "polymer/core-ajax#0.8-preview",
     "webcomponentsjs": "webcomponents/webcomponentsjs#~0.5.5",
     "paper-button": "polymer/paper-button#0.8-initial-port"
   }
