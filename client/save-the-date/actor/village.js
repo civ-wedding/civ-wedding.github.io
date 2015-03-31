@@ -1,4 +1,4 @@
-class Chris {
+class Village {
   constructor () {
     var mesh = new THREE.Mesh(
       this.geometry,
@@ -6,9 +6,9 @@ class Chris {
     );
 
     mesh.rotation.x = Math.PI / 2;
-    mesh.position.z = this.scaledHeight / 2;
-    mesh.position.x = this.scaledWidth / 3;
-    mesh.position.y = 5.5;
+    mesh.position.z = this.scaledHeight / 4;
+    //mesh.position.x = -this.scaledWidth / 2;
+    mesh.position.y = 10;
 
     mesh.origin = mesh.position.clone();
 
@@ -17,7 +17,7 @@ class Chris {
 
   get material () {
     let material = new THREE.MeshBasicMaterial({
-      map: window.textureCache.getTexture('./chris.png'),
+      map: window.textureCache.getTexture('./village.png'),
       wireframe: false
     });
 
@@ -47,6 +47,6 @@ class Chris {
   }
 
   get scalar () {
-    return 1024;
+    return 1700;
   }
 }

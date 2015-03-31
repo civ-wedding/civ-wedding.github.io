@@ -2,7 +2,10 @@ class TextureCache {
   static get urls () {
     return [
       './chris.png',
-      './donna.png'
+      './donna.png',
+      './village.png',
+      './pyramids.png',
+      './stonehenge.png'
     ];
   }
 
@@ -24,6 +27,7 @@ class TextureCache {
           url,
           function onLoad (texture) {
             texture.minFilter = THREE.LinearFilter;
+            texture.minFilter = THREE.LinearMipMapNearestFilter;
             resolve(urlMap[url] = texture);
           },
           function onProgress() {},

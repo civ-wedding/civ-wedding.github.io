@@ -64,19 +64,34 @@ void main(void) {
 
   // Sea
   if (tileType == 1.0) {
+    r = 0.4 - len * 0.25;
+    g = 0.6 - len * 0.1;
+    b = 0.8 - len * 0.05;
+    /*
     r = min(len - 0.33, 0.5);
     g = 0.33 + len * 0.5;
     b = 0.85;
+    */
   // Land
   } else if (tileType == 2.0) {
+    r = 0.5 - len * 0.15;
+    g = 0.75 - len * 0.1;
+    b = 0.2 - len * 0.05;
+    /*
     r = max(len, 0.33) * 0.85;
     g = 0.66 + len / 3.0;
     b = len / 4.0;
+    */
   // Desert
   } else {
+    r = 0.6 - len * 0.15;
+    g = 0.75 - len * 0.1;
+    b = 0.2 - len * 0.05;
+    /*
     r = (len + 0.25);
     g = 0.75 + len / 4.0;
     b = len / 2.0;
+    */
   }
 
   gl_FragColor = vec4(r, g, b, 1.0);

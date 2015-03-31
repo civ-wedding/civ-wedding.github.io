@@ -1,0 +1,74 @@
+<dom-module id="save-the-date-intro">
+  <style>
+    :host {
+      font-family: 'Lustria';
+      display: block;
+      position: fixed;
+
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #fafafa;
+      color: #555;
+      z-index: 100;
+
+      pointer-events: none;
+
+      transition: opacity 2s cubic-bezier(.4,.1,.36,.93) 10s;
+    }
+
+    :host span {
+      display: block;
+      position: absolute;
+      width: 90%;
+      text-align: center;
+      font-size: 1.25em;
+      opacity: 0;
+      font-style: italic;
+
+      transition-property: all;
+      transition-duration: 2s;
+      transition-timing-function: cubic-bezier(.4,.1,.36,.93);
+    }
+
+    :host .first-line {
+      top: 14em;
+      left: -1em;
+      transition-delay: 1s;
+    }
+
+    :host .second-line {
+      bottom: 14em;
+      right: -1em;
+      transition-delay: 5s;
+      transition-duration: 2.5s;
+    }
+
+    :host([begin]) {
+      opacity: 0;
+    }
+
+    :host([begin]) .first-line,
+    :host([begin]) .second-line {
+      opacity: 1;
+    }
+
+    :host([begin]) .first-line {
+      left: 0;
+    }
+
+    :host([begin]) .second-line {
+      right: 0;
+    }
+  </style>
+  <template>
+    <span class="first-line">Can you build a civilization..</span>
+    <span class="second-line">..to stand the test of time?</span>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'save-the-date-intro'
+  });
+</script>

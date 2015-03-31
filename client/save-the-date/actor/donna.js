@@ -6,8 +6,8 @@ class Donna {
     );
 
     mesh.rotation.x = Math.PI / 2;
-    mesh.position.z = this.scaledHeight / 2 + 0.15;
-    mesh.position.x = this.scaledWidth / 2;
+    mesh.position.z = this.scaledHeight / 2;
+    mesh.position.x = -this.scaledWidth / 4;
     mesh.position.y = 14.5;
 
     mesh.origin = mesh.position.clone();
@@ -39,14 +39,14 @@ class Donna {
   }
 
   get width () {
-    return 1031;
+    return 4096;
   }
 
   get height () {
-    return 1518;
+    return 4096;
   }
 
   get scalar () {
-    return 450;
+    return 1024;
   }
 }

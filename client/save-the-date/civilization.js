@@ -19,24 +19,36 @@ class Ocean {
 
 class Map {
   constructor (width = 5, height = 5) {
-    var obj = new Ocean();
+    var ocean = new Ocean();
+    var grid = [];
     var hex;
     var i;
     var j;
 
     for (i = 0; i < height; ++i) {
       for (j = 0; j < width; ++j) {
-        obj.add(new MapHexTile(
+        hex = new MapHexTile(
           this.tileType(j, i, width, height),
           i,
           j,
           width,
           height
-        ));
+        );
+
+        /*if (i === 0 && j === 0) {
+          hex.position.z += 2;
+        } else if (i === 0 && j === 1) {
+          hex.position.z += 1;
+        }*/
+
+        ocean.add(hex);
+        grid.push(hex);
       }
     }
 
-    return obj;
+    ocean.grid = grid;
+
+    return ocean;
   }
 
   tileType (x, y, width, height) {
@@ -84,23 +96,40 @@ class Civilization {
     );
 
     this.map = new Map(12, 12);
-    this.chris = new Chris();
-    this.donna = new Donna();
+
+    this.actors = [
+      this.chris = new Chris(),
+      this.donna = new Donna(),
+      this.village = new Village(),
+      this.pyramids = new Pyramids(),
+      this.stonehenge = new Stonehenge()
+    ];
+
     this.globalLight = new GlobalLight();
 
     this.scene.add(this.globalLight);
     this.scene.add(this.map);
 
-    this.scene.add(this.chris);
-    this.scene.add(this.donna);
+    this.actors.forEach((actor) => {
+      this.scene.add(actor);
+    });
 
     this.scene.fog = new THREE.FogExp2(0xffffff, 0.1);
+    /*document.body.addEventListener('keydown', function() {
+      this.camera.position.set(0, 10, 10);
+      this.camera.rotation.set(Math.PI / 4, 0, 0);
+    }.bind(this));
+
+    document.body.addEventListener('keyup', function() {
+      this.camera.position.set(0, 0, 2);
+      this.camera.rotation.set(Math.PI / 2, 0, 0);
+    }.bind(this));*/
 
     this.camera.position.z = 2;
     this.camera.rotation.x = Math.PI / 2;
     this.map.position.y = 10;
-    this.chris.position.y = 5;
-    this.chris.position.z = this.chris.geometry.parameters.height / 2 + 0.25;
+    //this.chris.position.y = 5;
+    //this.chris.position.z = this.chris.geometry.parameters.height;
 
     this.rotationVelocity = Civilization.defaultRotationVelocity;
     this.autoRotate = true;
@@ -163,16 +192,27 @@ class Civilization {
 
     }
 
-    this.chris.position.copy(this.chris.origin);
-    this.chris.position
-      .sub(this.map.position)
-      .applyEuler(this.map.rotation)
-      .add(this.map.position)
+    this.actors.forEach((actor) => {
+      actor.position.copy(actor.origin);
+      actor.position
+        .sub(this.map.position)
+        .applyEuler(this.map.rotation)
+        .add(this.map.position)
+    });
 
-    this.donna.position.copy(this.donna.origin);
-    this.donna.position
-      .sub(this.map.position)
-      .applyEuler(this.map.rotation)
-      .add(this.map.position)
+    this.stonehenge.position.x -= 0.5 *
+      Math.sin(this.map.rotation.z - Math.PI / 2);
+
+    var rot = Math.pow(Math.abs(Math.sin((this.map.rotation.z - Math.PI / 2) / 2)), 2);
+
+    this.stonehenge.scale.x = this.stonehenge.scale.y = 1 - rot * 0.5;
+    this.stonehenge.position.z -= (rot) * 0.25;
+
+    //this.stonehenge.position.x -= 0.5 *
+      //Math.sin(this.map.rotation.z - Math.PI / 2);
+
+    this.pyramids.position.x += 0.5 *
+      Math.sin(this.map.rotation.z - Math.PI / 2);
+
   }
 }
