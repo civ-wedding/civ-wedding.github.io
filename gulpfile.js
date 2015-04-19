@@ -23,7 +23,12 @@ gulp.task('copy-client', function () {
     .pipe(gulp.dest('dist/client'));
 });
 
-gulp.task('vulcanize', ['transform-client', 'copy-client'], function () {
+gulp.task('deploy-images', function () {
+  return gulp.src('client/*.png')
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('vulcanize', ['transform-client', 'copy-client', 'deploy-images'], function () {
   return gulp.src('dist/client/index.html')
     .pipe(vulcanize({
       dest: 'dist',

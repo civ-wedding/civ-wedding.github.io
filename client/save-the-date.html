@@ -1,11 +1,12 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-ajax/core-ajax.html">
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../core-icons/maps-icons.html">
-<link rel="import" href="../core-icons/notification-icons.html">
-<link rel="import" href="../core-icon/core-icon.html">
+<link rel="import" href="../iron-icons/maps-icons.html">
+<link rel="import" href="../iron-icons/notification-icons.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="./save-the-date/intro.html">
+<link rel="import" href="./save-the-date/baba-yetu.html">
+<script src="https://w.soundcloud.com/player/api.js"></script>
 <script src="../threejs/build/three.js"></script>
+<script src="../tweenjs/src/Tween.js"></script>
 <script src="./save-the-date/hex/geometry.js"></script>
 <script src="./save-the-date/hex/material.js"></script>
 <script src="./save-the-date/hex/mesh.js"></script>
@@ -29,13 +30,6 @@
       left: 0;
       right: 0;
       bottom: 0;
-    }
-    :host #audio {
-      display: block;
-      position: absolute;
-      top: -99999px;
-      left: -99999px;
-      visibility: hidden;
     }
 
     :host header {
@@ -100,6 +94,11 @@
       color: #555;
 
       z-index: 10;
+
+      background: url(banner.png);
+      background-size: 575px;
+      background-repeat: no-repeat;
+      background-position: center;
     }
 
     :host #input-container > paper-button {
@@ -125,6 +124,10 @@
       font-size: 0.8em;
     }
 
+    :host #input-container h2 span {
+      display: inline-block;
+    }
+
     @media (max-width: 820px) {
       :host header > h1 {
         font-size: 2.5em;
@@ -141,11 +144,27 @@
       :host header > h1 {
         font-size: 1.5em;
       }
+
+      :host #input-container {
+        background-size: 465px;
+      }
+
+      :host #input-container > h2 {
+        font-size: 1.2em;
+      }
     }
 
     @media (max-width: 420px) {
       :host header > h1 {
         font-size: 1.25em;
+      }
+
+      :host #input-container {
+        background-size: 375px;
+      }
+
+      :host #input-container > h2 {
+        font-size: 0.95em;
       }
     }
 
@@ -153,13 +172,33 @@
       :host header > h1 {
         font-size: 1em;
       }
+
+      :host #input-container {
+        background-size: 325px;
+      }
+
+      :host #input-container > h2 {
+        font-size: 0.8em;
+      }
     }
 
+    @media (max-height: 400px) {
+      :host header > h1 {
+        font-size: 1em;
+      }
+
+      :host #input-container {
+        background-size: 325px;
+      }
+
+      :host #input-container > h2 {
+        font-size: 0.8em;
+      }
+    }
   </style>
   <template>
-    <iframe id="audio" width="100%" height="160" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/558896&amp;auto_play=true&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=false"></iframe>
-
-    <save-the-date-intro></save-the-date-intro>
+    <baba-yetu id="music"></baba-yetu>
+    <save-the-date-intro id="intro" begin="[[loaded]]"></save-the-date-intro>
     <header>
       <h1>
         <span class="top">C<span class="small">hris</span><span class="small"> & </span>D<span class="small">onna's</span></span>
@@ -168,7 +207,7 @@
       </h1>
     </header>
     <div id="input-container">
-      <h2>S<span class="small">ave the </span>D<span class="small">ate</span></h2>
+      <h2>Save the Date</h2>
     </div>
     <div id="visualization-container"></div>
   </template>
@@ -186,7 +225,17 @@
     ready: function() {
       window.textureCache = window.textureCache || new TextureCache();
 
-      window.textureCache.loads.then(function () {
+      Promise.all([
+        window.textureCache.loads,
+        this.$.intro.widgetLoads
+      ]).then(function() {
+        this.loaded = true;
+        this.arcText();
+
+        window.addEventListener('resize', function () {
+          this.arcText();
+        }.bind(this));
+
         this.visualization = new SaveTheDate();
 
         Polymer.dom(this.$['visualization-container'])
@@ -194,8 +243,62 @@
 
         this.visualization.start();
 
-        this.loaded = true;
+        return this.$.intro.finishes;
+      }.bind(this)).then(function() {
+        this.visualization.reveal();
       }.bind(this));
+    },
+
+    get inputContainer () {
+      return Polymer.dom(this.$['input-container']);
+    },
+
+    get text () {
+      return this.inputContainer.querySelector('h2').textContent;
+    },
+
+    get clampedWidth () {
+      return Math.max(
+        Math.min(
+          window.innerWidth,
+          820
+        ),
+        350
+      ) - 350;
+    },
+
+    get arcScale () {
+      return window.innerHeight < 400 ?
+        5 : this.clampedWidth / 470 * 5 + 5;
+    },
+
+    arcText: function() {
+      var maxRotation = 4;
+      var minRotation = -7;
+      var characters = this.text.split('');
+      var delta = (maxRotation - minRotation) / characters.length;
+      var container = Polymer.dom(this.inputContainer.querySelector('h2'));
+      var rotation = maxRotation;
+
+      container.node.textContent = '';
+
+      characters.forEach(function (character, index, list) {
+        var span = document.createElement('span');
+        var interval = Math.sin(Math.PI * index / list.length);
+        var translation = 5 + Math.floor(interval * this.arcScale);
+
+        span.style.transform = 'rotateZ(' + rotation + 'deg) translateY(' + translation + 'px)';
+        span.style.webkitTransform = 'rotateZ(' + rotation + 'deg) translateY(' + translation + 'px)';
+
+        span.innerHTML = character === ' ' ? '&nbsp;' : character;
+
+        if (character !== 'S' && character !== 'D') {
+          span.classList.add('small');
+        }
+
+        container.appendChild(span);
+        rotation -= delta;
+      }, this);
     }
   });
 </script>

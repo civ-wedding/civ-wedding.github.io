@@ -95,6 +95,9 @@ class Civilization {
       1000
     );
 
+    this.camera.position.z = 2;
+    this.camera.rotation.x = Math.PI / 4;
+
     this.map = new Map(12, 12);
 
     this.actors = [
@@ -115,21 +118,10 @@ class Civilization {
     });
 
     this.scene.fog = new THREE.FogExp2(0xffffff, 0.1);
-    /*document.body.addEventListener('keydown', function() {
-      this.camera.position.set(0, 10, 10);
-      this.camera.rotation.set(Math.PI / 4, 0, 0);
-    }.bind(this));
 
-    document.body.addEventListener('keyup', function() {
-      this.camera.position.set(0, 0, 2);
-      this.camera.rotation.set(Math.PI / 2, 0, 0);
-    }.bind(this));*/
+    this.initializeCameraTween();
 
-    this.camera.position.z = 2;
-    this.camera.rotation.x = Math.PI / 2;
     this.map.position.y = 10;
-    //this.chris.position.y = 5;
-    //this.chris.position.z = this.chris.geometry.parameters.height;
 
     this.rotationVelocity = Civilization.defaultRotationVelocity;
     this.autoRotate = true;
@@ -176,6 +168,35 @@ class Civilization {
     return this.rotationVelocity;
   }
 
+  initializeCameraPosition () {
+  }
+
+  initializeCameraTween () {
+    var camera = this.camera;
+
+    this.cameraTween = new TWEEN.Tween({
+      positionZ: 10,
+      rotationX: Math.PI
+    })
+    .to({
+      positionZ: 2,
+      rotationX: Math.PI / 2
+    }, 3000)
+    .easing(TWEEN.Easing.Cubic.Out)
+    .onUpdate(function() {
+      console.log(this.positionZ, this.rotationX);
+      camera.position.z = this.positionZ;
+      camera.rotation.x = this.rotationX;
+    });
+
+    this.camera.position.z = 10;
+    this.camera.rotation.x = Math.PI;
+  }
+
+  reveal () {
+    this.cameraTween.start();
+  }
+
   update () {
     this.rotationVelocity = this.clampedRotationVelocity;
 
@@ -189,7 +210,6 @@ class Civilization {
       }
 
       this.map.rotation.z += this.rotationVelocity;
-
     }
 
     this.actors.forEach((actor) => {

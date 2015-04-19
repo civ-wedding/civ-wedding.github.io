@@ -38,8 +38,9 @@ class SaveTheDate {
     this.civilization.updateDimensions();
   }
 
-  start () {
+  start (time) {
     this.civilization.update();
+    window.TWEEN.update(time);
 
     this.webgl.render(
       this.civilization.scene,
@@ -47,5 +48,9 @@ class SaveTheDate {
     );
 
     window.requestAnimationFrame(this.start.bind(this));
+  }
+
+  reveal () {
+    this.civilization.reveal();
   }
 }

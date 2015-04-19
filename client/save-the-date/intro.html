@@ -1,3 +1,4 @@
+<link rel="import" href="../../polymer/polymer.html">
 <dom-module id="save-the-date-intro">
   <style>
     :host {
@@ -33,13 +34,13 @@
     }
 
     :host .first-line {
-      top: 14em;
+      margin-top: 25%;
       left: -1em;
       transition-delay: 1s;
     }
 
     :host .second-line {
-      bottom: 14em;
+      margin-top: 35%;
       right: -1em;
       transition-delay: 5s;
       transition-duration: 2.5s;
@@ -63,12 +64,40 @@
     }
   </style>
   <template>
-    <span class="first-line">Can you build a civilization..</span>
+    <span class="first-line">Can you build an empire..</span>
     <span class="second-line">..to stand the test of time?</span>
   </template>
 </dom-module>
 <script>
   Polymer({
-    is: 'save-the-date-intro'
+    is: 'save-the-date-intro',
+
+    properties: {
+      begin: {
+        type: Boolean,
+        reflectToAttribute: true,
+        observer: 'beginChanged'
+      },
+
+      finishes: {
+        value: function() {
+          return new Promise(function(resolve) {
+            this.resolveFinishes = resolve;
+          }.bind(this));
+        }
+      },
+
+      finishingTimer: {
+        value: null
+      }
+    },
+
+    beginChanged: function() {
+      if (this.begin && this.finishingTimer === null) {
+        this.finishingTimer = window.setTimeout(function() {
+          this.resolveFinishes();
+        }.bind(this), 12000);
+      }
+    }
   });
 </script>
