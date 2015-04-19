@@ -188,7 +188,6 @@ var Civilization = (function () {
           positionZ: 2,
           rotationX: Math.PI / 2
         }, 3000).easing(TWEEN.Easing.Cubic.Out).onUpdate(function () {
-          console.log(this.positionZ, this.rotationX);
           camera.position.z = this.positionZ;
           camera.rotation.x = this.rotationX;
         });

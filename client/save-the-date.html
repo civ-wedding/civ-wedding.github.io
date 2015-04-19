@@ -223,6 +223,10 @@
     },
 
     ready: function() {
+      document.ontouchmove = function(event) {
+        event.preventDefault();
+      };
+
       window.textureCache = window.textureCache || new TextureCache();
 
       Promise.all([
