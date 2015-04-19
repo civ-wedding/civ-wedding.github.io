@@ -1,0 +1,29 @@
+{
+  "name": "core-meta",
+  "version": "0.8.0",
+  "private": true,
+  "main": "core-meta.html",
+  "authors": [
+    "The Polymer Authors"
+  ],
+  "repository": "https://github.com/Polymer/core-meta/tree/0.8-preview",
+  "dependencies": {
+    "polymer": "Polymer/polymer#v0.8.0-rc.4"
+  },
+  "devDependencies": {
+    "iron-doc-viewer": "polymerelements/iron-doc-viewer#master",
+    "test-fixture": "polymerelements/test-fixture#master",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.6.0",
+    "web-component-tester": "~2.2.6"
+  },
+  "homepage": "https://github.com/polymerelements/iron-meta",
+  "_release": "0.8.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.8.0",
+    "commit": "e6b7a4f14f8a5d22c0f9aaa2c402e6c4ebc87cab"
+  },
+  "_source": "git://github.com/polymerelements/iron-meta.git",
+  "_target": "^0.8.0",
+  "_originalSource": "polymerelements/iron-meta"
+}

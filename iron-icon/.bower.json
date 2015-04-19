@@ -1,0 +1,27 @@
+{
+  "name": "iron-icon",
+  "private": true,
+  "dependencies": {
+    "iron-meta": "polymerelements/iron-meta#^0.8.0",
+    "polymer": "polymer/polymer#v0.8.0-rc.4"
+  },
+  "devDependencies": {
+    "test-fixture": "polymerelements/test-fixture#^0.8.0",
+    "iron-iconset": "polymerelements/iron-iconset#^0.8.0",
+    "core-icons": "polymerelements/iron-icons#^0.8.0",
+    "iron-doc-viewer": "polymerelements/iron-doc-viewer",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.6.0",
+    "web-component-tester": "~2.2.6"
+  },
+  "homepage": "https://github.com/polymerelements/iron-icon",
+  "version": "0.8.0",
+  "_release": "0.8.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.8.0",
+    "commit": "9bcf449e548c5f6a9d8ab5b55d8b069592ba2af1"
+  },
+  "_source": "git://github.com/polymerelements/iron-icon.git",
+  "_target": "^0.8.0",
+  "_originalSource": "polymerelements/iron-icon"
+}

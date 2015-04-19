@@ -1,0 +1,42 @@
+<link rel="import" href="../../polymer/polymer.html">
+<dom-module id="baba-yetu">
+  <template>
+    <style>
+      #audio {
+        display: block;
+        position: absolute;
+        top: -99999px;
+        left: -99999px;
+        visibility: hidden;
+      }
+    </style>
+    <iframe id="audio" width="100%" height="160" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/558896"></iframe>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'baba-yetu',
+
+    ready: function() {
+      //&amp;auto_play=true&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=false
+      this.widget = SC.Widget(this.$.audio);
+      this.widgetLoads = new Promise(function(resolve, reject) {
+        this.widget.bind(SC.Widget.Events.READY, resolve);
+        this.widget.bind(SC.Widget.Events.ERROR, reject);
+      }.bind(this));
+
+      this.audioIsPlaying = new Promise(function(resolve) {
+        this.widget.bind(SC.Widget.Events.PLAY, resolve);
+      }.bind(this));
+
+      this.widgetLoads.then(function() {
+        console.log('Widget has loaded.');
+        this.widget.play();
+      }.bind(this));
+
+      this.audioIsPlaying.then(function() {
+        console.log('Audio is playing.');
+      });
+    }
+  });
+</script>

@@ -1,0 +1,19 @@
+{
+  "name": "core-meta",
+  "version": "0.8.0",
+  "private": true,
+  "main": "core-meta.html",
+  "authors": [
+    "The Polymer Authors"
+  ],
+  "repository": "https://github.com/Polymer/core-meta/tree/0.8-preview",
+  "dependencies": {
+    "polymer": "Polymer/polymer#v0.8.0-rc.4"
+  },
+  "devDependencies": {
+    "iron-doc-viewer": "polymerelements/iron-doc-viewer#master",
+    "test-fixture": "polymerelements/test-fixture#master",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.6.0",
+    "web-component-tester": "~2.2.6"
+  }
+}
