@@ -1,0 +1,199 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-material/paper-material.html">
+<link rel="import" href="../../paper-fab/paper-fab.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../iron-image/iron-image.html">
+<link rel="import" href="../../neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import" href="../../neon-animation/animations/ripple-animation.html">
+<link rel="import" href="../../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../neon-animation/animations/transform-animation.html">
+<link rel="import" href="../../google-map/google-map.html">
+<link rel="import" href="../../google-map/google-map-marker.html">
+
+<dom-module id="party-details">
+  <style>
+    :host {
+
+      display: block;
+      position: relative !important;
+      overflow: auto;
+      z-index: 1000;
+
+      font-family: 'Lustria';
+      color: #555;
+
+      --paper-fab: {
+        background-color: rgb(120, 215, 110);
+      };
+
+      --paper-fab-keyboard-focus-background: rgb(100, 200, 105);
+    }
+
+    a {
+      font-weight: bold;
+      color: rgb(110, 175, 230);
+    }
+
+    #fixed {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+
+      background-color: rgb(110, 175, 230);
+
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    #card {
+      display: block;
+      position: relative;
+      box-sizing: border-box;
+      margin: auto;
+      padding: 0 2em;
+      top: 0;
+      max-width: 700px;
+      background-color: #fff;
+      z-index: 20;
+    }
+
+    pre {
+      font-size: 1.25em;
+      font-style: italic;
+    }
+
+    paper-fab {
+      display: block;
+      position: fixed;
+      top: 292px;
+      left: calc((100vw - 700px) / 2 - 28px);
+      z-index: 2000;
+    }
+
+    google-map {
+      width: 100%;
+      height: 320px;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    iron-image {
+      width: 100%;
+      height: 400px;
+    }
+
+    .margin-bleed {
+      margin-left: -2em;
+      width: calc(100% + 4em);
+    }
+
+    @media (max-width: 756px) {
+      paper-fab {
+        top: 1em;
+        left: 1em;
+      }
+    }
+  </style>
+  <template>
+    <paper-fab id="fab" icon="arrow-back" on-tap="_closePage"></paper-fab>
+    <paper-material id="card">
+      <a href="https://www.google.com/maps/place/2915+S+Vasco+Rd,+Livermore,+CA+94550/@37.666449,-121.719954,17z" target="_blank">
+        <google-map id="map" class="margin-bleed" latitude="37.666449" longitude="-121.719954" zoom="13" language="en" disable-default-ui zoomable="false">
+          <google-map-marker latitude="37.666449" longitude="-121.719954"
+                             title="Shadow Hills Vineyards" draggable="false"></google-map-marker>
+        </google-map>
+      </a>
+      <h1>August 15, 2015 &middot; Ceremony at 5:00pm</h1>
+      <p>Please join Chris &amp; Donna at the Shadow Hills Vineyards, the home of Elizabeth Greist (Chris's Grandmother).</p>
+      <pre>2915 S Vasco Road
+Livermore, CA 94550</pre>
+      <h2>Dress code: historical</h2>
+      <p>We welcome you to dress as a person from any civilization from any time period, well-known or known only to yourself. Or don't (whatever floats your trireme)!</p>
+      <h2>Gift registry</h2>
+      <p>If you are in a gift-giving mood, please consider using our gift registery on Amazon. <a href="http://www.amazon.com/registry/wedding/MBC68AHOHCDR" target="_blank">Click here to go to the registry.</a></p>
+      <h2>Dinner &amp; refreshments provided</h2>
+      <p>We'll have drinks, and dinner catered by the popular <a href="http://www.senorsisig.com" target="_blank">Señor Sisig</a> Filipino food truck. Oh, and cake too!</p>
+      <iron-image class="margin-bleed" src="senor-sisig.jpg" sizing="cover"></iron-image>
+
+
+    </paper-material>
+    <div id="fixed"></div>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'party-details',
+
+    behaviors: [
+      Polymer.NeonSharedElementAnimatableBehavior
+    ],
+
+    properties: {
+      sharedElements: {
+        type: Object,
+        value: function() {
+          return {
+            'ripple': this.$.fixed
+          }
+        }
+      },
+
+      animationConfig: {
+        type: Object,
+        value: function() {
+          return {
+            'entry': [{
+              name: 'ripple-animation',
+              id: 'ripple',
+              toPage: this
+            }, {
+              name: 'fade-in-animation',
+              node: this.$.card,
+              timing: {
+                delay: 150
+              }
+            }, {
+              name: 'fade-in-animation',
+              node: this.$.fab,
+              timing: {
+                delay: 250
+              }
+            }, {
+              name: 'transform-animation',
+              node: this.$.card,
+              transformFrom: 'translateY(5vh)',
+              transformTo: 'translateY(0vh)',
+              timing: {
+                delay: 150
+              }
+            }],
+            'exit': [{
+              name: 'fade-out-animation',
+              node: this.$.fixed
+            }, {
+              name: 'fade-out-animation',
+              node: this.$.fab
+            }, {
+              name: 'transform-animation',
+              node: this.$.card,
+              transformFrom: 'translateY(0vh)',
+              transformTo: 'translateY(5vh)'
+            }, {
+              name: 'fade-out-animation',
+              node: this.$.card
+            }]
+          };
+        }
+      }
+    },
+
+    _closePage: function() {
+      window.location.hash = '/intro';
+    }
+  });
+</script>
+

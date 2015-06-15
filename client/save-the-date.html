@@ -4,6 +4,8 @@
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="./save-the-date/intro.html">
 <link rel="import" href="./save-the-date/baba-yetu.html">
+<link rel="import" href="../neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import" href="../neon-animation/animations/ripple-animation.html">
 <script src="https://w.soundcloud.com/player/api.js"></script>
 <script src="../threejs/build/three.js"></script>
 <script src="../tweenjs/src/Tween.js"></script>
@@ -23,6 +25,16 @@
 
 <dom-module id="save-the-date">
   <style>
+    :host {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    :host(:not(.iron-selected)) #visualization-container {
+    }
+
     :host #visualization-container {
       display: block;
       position: fixed;
@@ -82,8 +94,6 @@
       display: block;
       position: fixed;
 
-      pointer-events: none;
-
       width: 100%;
       bottom: 0;
       left: 0;
@@ -99,6 +109,8 @@
       background-size: 575px;
       background-repeat: no-repeat;
       background-position: center;
+
+      cursor: pointer;
     }
 
     :host #input-container > paper-button {
@@ -106,10 +118,73 @@
       bottom: 1em;
     }
 
-    core-icon {
-      width: 1.5em;
-      height: 1.5em;
-      margin-right: 0.1em;
+    :host([hide-overlay]) #title,
+    :host([hide-overlay]) #input-container {
+      opacity: 0;
+    }
+
+    [hidden] {
+      display: none;
+    }
+
+    #title,
+    #input-container {
+      transition: opacity 0.3s;
+      opacity: 1
+    }
+
+    @-webkit-keyframes glow {
+      0%   { color: rgba(0,0,0,0.75); }
+      25% { color: rgba(100, 150, 255, 1); }
+      50%   { color: rgba(0,0,0,0.75); }
+    }
+
+    @-moz-keyframes glow {
+      0%   { color: rgba(0,0,0,0.75); }
+      25% { color: rgba(100, 150, 255, 1); }
+      50%   { color: rgba(0,0,0,0.75); }
+    }
+
+    @keyframes glow {
+      0%   { color: rgba(0,0,0,0.75); }
+      25% { color: rgba(100, 150, 255, 1); }
+      50%   { color: rgba(0,0,0,0.75); }
+    }
+
+    @keyframes tap {
+      0% { transform: rotate(0deg); }
+      70% { transform: rotate(0deg); }
+      71% { transform: translate(5px, 0) rotate(10deg) scale(0.95); }
+      74% { transform: translate(5px, 0) rotate(10deg) scale(0.95); }
+      75% { transform: rotate(0deg); }
+      80% { transform: rotate(0deg); }
+      81% { transform: translate(5px, 0) rotate(10deg) scale(0.95); }
+      84% { transform: translate(5px, 0) rotate(10deg) scale(0.95); }
+      85% { transform: rotate(0deg); }
+    }
+
+    .pointer {
+      display: none;
+    }
+
+    .glow {
+      -webkit-animation: glow 4s infinite;
+      -moz-animation: glow 4s infinite;
+      animation: glow 4s infinite;
+    }
+
+    .glow:after {
+      content: '';
+
+      display: block;
+      position: absolute;
+      bottom: 25px;
+      left: calc(50% + 180px);
+      width: 64px;
+      height: 88px;
+      background: url('./pointer.png');
+      background-size: 100%;
+      animation: tap 2.5s infinite;
     }
 
     paper-button span {
@@ -128,21 +203,43 @@
       display: inline-block;
     }
 
+    .no-pointer-events {
+      pointer-events: none;
+      cursor: -webkit-grab;
+      cursor: -moz-grab;
+      cursor: grab;
+    }
+
     @media (max-width: 820px) {
       :host header > h1 {
         font-size: 2.5em;
       }
+
     }
 
     @media (max-width: 690px) {
       :host header > h1 {
         font-size: 2em;
       }
+
+      .glow:after {
+        bottom: 40px;
+        left: calc(50% + 180px);
+        width: 48px;
+        height: 66px;
+      }
     }
 
     @media (max-width: 560px) {
       :host header > h1 {
         font-size: 1.5em;
+      }
+
+      .glow:after {
+        bottom: 40px;
+        left: calc(50% + 150px);
+        width: 48px;
+        height: 66px;
       }
 
       :host #input-container {
@@ -159,6 +256,13 @@
         font-size: 1.25em;
       }
 
+      .glow:after {
+        bottom: 40px;
+        left: calc(50% + 110px);
+        width: 40px;
+        height: 55px;
+      }
+
       :host #input-container {
         background-size: 375px;
       }
@@ -171,6 +275,13 @@
     @media (max-width: 350px) {
       :host header > h1 {
         font-size: 1em;
+      }
+
+      .glow:after {
+        bottom: 30px;
+        left: calc(50% + 90px);
+        width: 32px;
+        height: 44px;
       }
 
       :host #input-container {
@@ -198,32 +309,87 @@
   </style>
   <template>
     <baba-yetu id="music"></baba-yetu>
-    <save-the-date-intro id="intro" begin="[[loaded]]"></save-the-date-intro>
-    <header>
+    <save-the-date-intro id="intro" begin="[[loaded]]" hidden$="[[skipIntro]]"></save-the-date-intro>
+    <header id="title">
       <h1>
         <span class="top">C<span class="small">hris</span><span class="small"> & </span>D<span class="small">onna's</span></span>
         <span class="hero">C<span class="small">ivilization</span></span>
         <span class="bottom">A<span class="small">ugust</span> 15<span class="small">th,</span> 2015 &middot; L<span class="small">ivermore,</span> CA</span>
       </h1>
     </header>
-    <div id="input-container">
-      <h2>Save the Date</h2>
+    <div id="input-container" class$="[[_inputContainerClass(userIsKnown)]]" on-tap="_onInputContainerTap">
+      <h2>[[_welcomeTextFor(userIsKnown)]]</h2>
     </div>
     <div id="visualization-container"></div>
   </template>
 </dom-module>
 <script>
+  'use strict';
+
+  function timePasses(ms) {
+    return new Promise(function(resolve) {
+      window.setTimeout(function() {
+        resolve();
+      }, ms);
+    });
+  }
+
   Polymer({
     is: 'save-the-date',
 
+    behaviors: [
+      Polymer.NeonSharedElementAnimatableBehavior
+    ],
+
+
     properties: {
       loaded: {
-        type: Boolean
+        type: Boolean,
+        readOnly: true,
+        reflectToAttribute: true
+      },
+
+      hideOverlay: {
+        type: Boolean,
+        reflectToAttribute: true
+      },
+
+      skipIntro: {
+        type: Boolean,
+        reflectToAttribute: true
+      },
+
+      userIsKnown: {
+        type: Boolean,
+        reflectToAttribute: true,
+        observer: '_userIsKnownChanged'
+      },
+
+      animationConfig: {
+        type: Object,
+        value: function() {
+          return {
+            'exit': [{
+              name: 'ripple-animation',
+              id: 'ripple',
+              fromPage: this
+            }]
+          }
+        }
+      },
+
+      sharedElements: {
+        type: Object,
+        value: function() {
+          return {
+            'ripple': this.$['input-container']
+          };
+        }
       }
     },
 
-    ready: function() {
-      document.ontouchmove = function(event) {
+    start: function() {
+      this.ontouchmove = function(event) {
         event.preventDefault();
       };
 
@@ -233,7 +399,7 @@
         window.textureCache.loads,
         this.$.intro.widgetLoads
       ]).then(function() {
-        this.loaded = true;
+        this._setLoaded(true);
         this.arcText();
 
         window.addEventListener('resize', function () {
@@ -247,6 +413,10 @@
 
         this.visualization.start();
 
+        if (this.skipIntro) {
+          return timePasses(3000);
+        }
+
         return this.$.intro.finishes;
       }.bind(this)).then(function() {
         this.visualization.reveal();
@@ -258,7 +428,7 @@
     },
 
     get text () {
-      return this.inputContainer.querySelector('h2').textContent;
+      return this._welcomeTextFor(this.userIsKnown);
     },
 
     get clampedWidth () {
@@ -274,6 +444,31 @@
     get arcScale () {
       return window.innerHeight < 400 ?
         5 : this.clampedWidth / 470 * 5 + 5;
+    },
+
+    _welcomeTextFor: function(userIsKnown) {
+      if (userIsKnown) {
+        return 'Party Details';
+      }
+
+      return 'Save the Date';
+    },
+
+    _userIsKnownChanged: function(userIsKnown) {
+      if (userIsKnown) {
+        this.$['input-container'].classList.add('glow');
+      }
+      this.arcText();
+    },
+
+    _onInputContainerTap: function(event) {
+      this.animationConfig['exit'][0].gesture = event.detail;
+
+      this.fire('request-details');
+    },
+
+    _inputContainerClass: function(userIsKnown) {
+      return userIsKnown ? '' : 'no-pointer-events';
     },
 
     arcText: function() {
@@ -296,7 +491,7 @@
 
         span.innerHTML = character === ' ' ? '&nbsp;' : character;
 
-        if (character !== 'S' && character !== 'D') {
+        if (character !== 'P' && character !== 'S' && character !== 'D') {
           span.classList.add('small');
         }
 

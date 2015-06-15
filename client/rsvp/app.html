@@ -1,0 +1,148 @@
+<script src="../../director/build/director.js"></script>
+<link rel="import" href="../../firebase-element/firebase-document.html">
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../../neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../save-the-date.html">
+<link rel="import" href="party-details.html">
+<link rel="import" href="party-invitation.html">
+
+<dom-module id="rsvp-app">
+  <template>
+    <firebase-document
+      location="[[_computeInvitationLocation(invitationCode)]]"
+      data="{{invitation}}">
+    </firebase-document>
+    <iron-localstorage name="received-invitation" value="{{receivedInvitation}}"></iron-localstorage>
+
+    <neon-animated-pages selected="{{selectedPage}}" on-neon-animation-finish="notifyResize">
+      <save-the-date id="intro" user-is-known="[[receivedInvitation]]" on-request-details="_onRequestDetails"></save-the-date>
+      <party-details id="details"></party-details>
+      <party-invitation id="invitation" invitation="{{invitation}}"></party-invitation>
+    </neon-animated-pages>
+
+  </template>
+</dom-module>
+
+<script>
+  'use strict';
+
+  Polymer({
+    is: 'rsvp-app',
+
+    behaviors: [
+      Polymer.IronResizableBehavior
+    ],
+
+    properties: {
+      invitation: {
+        type: Object
+      },
+
+      invitationCode: {
+        type: String
+      },
+
+      receivedInvitation: {
+        type: Boolean,
+        notify: true
+      },
+
+      showInvitation: {
+        type: Boolean,
+        value: false
+      },
+
+      showDetails: {
+        type: Boolean,
+        value: false
+      },
+
+      selectedPage: {
+        type: Number,
+        value: 0
+      }
+    },
+
+    observers: [
+      '_checkInvitationValidity(invitation)'
+    ],
+
+    ready: function() {
+      this.router = Router({
+        '/invitation/:code': this._showInvitation.bind(this),
+        '/details': this._showDetails.bind(this),
+        '/intro': this._showIntro.bind(this)
+      });
+
+      this.router.configure({
+        notfound: function() {
+          if (!/^(invitation|details|intro)/.test(window.location.hash)) {
+            window.location.hash = '/intro';
+          }
+        }
+      });
+
+      if (!window.location.hash) {
+        window.location.hash = '/intro';
+      }
+
+      this.router.init();
+
+      this.async(function() {
+        this.$.intro.start();
+      }, 1);
+    },
+
+    _checkInvitationValidity: function(invitation) {
+      if (invitation && invitation.guest1) {
+        this.receivedInvitation = true;
+
+        this.async(function() {
+          this.selectedPage = 2;
+        }, 1);
+      }
+    },
+
+    _computeInvitationLocation: function(invitationCode) {
+      return 'https://c-and-d-wedding.firebaseio.com/invitations/' +
+        invitationCode;
+    },
+
+    _onRequestDetails: function() {
+      window.location.hash = '/details';
+    },
+
+    _showDetails: function() {
+      if (!this.receivedInvitation) {
+        return;
+      }
+
+      this.async(function() {
+        this.selectedPage = 1;
+      }, 1);
+    },
+
+    _showIntro: function() {
+      this.async(function() {
+        this.selectedPage = 0;
+      });
+    },
+
+    _showInvitation: function(invitationCode) {
+      if (this.invitationCode === invitationCode) {
+        if (!this.receivedInvitation) {
+          return;
+        }
+
+        this.async(function() {
+          this.selectedPage = 2;
+        }, 1);
+      }
+
+      this.invitationCode = invitationCode;
+    }
+  });
+
+</script>

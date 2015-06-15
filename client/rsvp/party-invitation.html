@@ -1,0 +1,210 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-material/paper-material.html">
+<link rel="import" href="../../paper-fab/paper-fab.html">
+<link rel="import" href="../../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../iron-image/iron-image.html">
+<link rel="import" href="../../neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import" href="../../neon-animation/animations/ripple-animation.html">
+<link rel="import" href="../../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../neon-animation/animations/transform-animation.html">
+
+<dom-module id="party-invitation">
+  <style>
+    :host {
+
+      display: block;
+      position: relative !important;
+      overflow: auto;
+      z-index: 1001;
+
+      font-family: 'Lustria';
+      color: #555;
+      min-height: 100vh;
+
+      --paper-fab: {
+        background-color: rgb(110, 175, 230);
+      };
+
+      --paper-fab-keyboard-focus-background: rgb(100, 150, 200);
+
+      --paper-checkbox-unchecked-color: #555;
+      --paper-checkbox-checked-color: rgb(110, 175, 230);
+      --paper-checkbox-checked-ink-color: rgb(110, 175, 230);
+      --paper-checkbox-unchecked-ink-color: rgb(110, 175, 230);
+
+      --paper-input-container-focus-color: rgb(110, 175, 230);
+    }
+
+    #fixed {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      background-color: rgb(120, 215, 110);
+
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    #card {
+      display: block;
+      position: relative;
+      box-sizing: border-box;
+      margin: auto;
+      padding: 1em 2em;
+      top: 0;
+      max-width: 700px;
+      background-color: #fff;
+      z-index: 20;
+    }
+
+    .margin-bleed {
+      margin-left: -2em;
+      width: calc(100% + 4em);
+    }
+
+    .large {
+      font-size: 2em;
+    }
+
+    .centered {
+      display: block;
+      position: relative;
+      text-align: center;
+      padding: 1em;
+    }
+
+    .constrained {
+      margin: auto 20%;
+    }
+
+    .caps {
+      text-transform: uppercase;
+    }
+
+    paper-checkbox,
+    paper-input,
+    .extra-guests {
+      display: block;
+      margin: 2em 20%;
+    }
+
+    [hidden] {
+      display: none;
+    }
+
+    @media (max-width: 700px) {
+      .constrained {
+        margin: auto 5%;
+      }
+
+      paper-checkbox,
+      paper-input,
+      .extra-guests {
+        display: block;
+        margin: 2em 5%;
+      }
+    }
+  </style>
+  <template>
+    <paper-material id="card">
+      <span class="centered">
+        <p class="large">Donna Almendrala</p>
+        <p class="ampersand caps">and</p>
+        <p class="large">Christopher Joel</p>
+        <p class="constrained caps">request the pleasure of your company to take part in their new civilization.</p>
+      </span>
+
+      <paper-checkbox disabled="[[invitation.wontAttend]]" checked="{{invitation.guest1.attending}}"><span>[[invitation.guest1.name]]</span> will join the celebration.</paper-checkbox>
+      <paper-checkbox disabled="[[invitation.wontAttend]]" checked="{{invitation.guest2.attending}}"><span>[[invitation.guest2.name]]</span> will join the celebration.</paper-checkbox>
+      <paper-input hidden="[[!invitation.hasOtherFamily]]" disabled="[[invitation.wontAttend]]" label="# additional family attending" type="number" value="{{invitation.additionalGuests}}"></paper-input>
+      <paper-checkbox checked="{{invitation.wontAttend}}">We can't make it, but worry not: there will be peace in our time.</paper-checkbox>
+
+      <span class="centered">
+        <paper-fab disabled="[[_computeFabDisabled(invitation.*)]]" icon="done" on-tap="_closePage"></paper-fab>
+      </span>
+    </paper-material>
+    <div id="fixed"></div>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'party-invitation',
+
+    behaviors: [
+      Polymer.NeonSharedElementAnimatableBehavior
+    ],
+
+    properties: {
+      invitation: {
+        type: Object
+      },
+
+      sharedElements: {
+        type: Object,
+        value: function() {
+          return {
+            'ripple': this.$.fixed
+          }
+        }
+      },
+
+      animationConfig: {
+        type: Object,
+        value: function() {
+          return {
+            'entry': [{
+              name: 'ripple-animation',
+              id: 'ripple',
+              toPage: this
+            }, {
+              name: 'fade-in-animation',
+              node: this.$.card,
+              timing: {
+                delay: 150
+              }
+            }, {
+              name: 'transform-animation',
+              node: this.$.card,
+              transformFrom: 'translateY(5vh)',
+              transformTo: 'translateY(0vh)',
+              timing: {
+                delay: 150
+              }
+            }],
+            'exit': [{
+              name: 'fade-out-animation',
+              node: this.$.fixed
+            }, {
+              name: 'transform-animation',
+              node: this.$.card,
+              transformFrom: 'translateY(0vh)',
+              transformTo: 'translateY(5vh)'
+            }, {
+              name: 'fade-out-animation',
+              node: this.$.card
+            }]
+          };
+        }
+      }
+    },
+
+    _closePage: function() {
+      window.location.hash = '/intro';
+    },
+
+    _computeFabDisabled: function() {
+      return !(this.invitation.wontAttend ||
+        this.invitation.guest2.attending ||
+        this.invitation.guest1.attending);
+    }
+  });
+</script>
+
