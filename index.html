@@ -55877,9 +55877,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </span>
 
       <paper-checkbox disabled="[[invitation.wontAttend]]" checked="{{invitation.guest1.attending}}"><span>[[invitation.guest1.name]]</span> will join the celebration.</paper-checkbox>
-      <paper-checkbox disabled="[[invitation.wontAttend]]" checked="{{invitation.guest2.attending}}"><span>[[invitation.guest2.name]]</span> will join the celebration.</paper-checkbox>
+      <paper-checkbox hidden="[[_isSoloParty(invitation)]]" disabled="[[invitation.wontAttend]]" checked="{{invitation.guest2.attending}}"><span>[[invitation.guest2.name]]</span> will join the celebration.</paper-checkbox>
       <paper-input hidden="[[!invitation.hasOtherFamily]]" disabled="[[invitation.wontAttend]]" label="# additional family attending" type="number" value="{{invitation.additionalGuests}}"></paper-input>
-      <paper-checkbox checked="{{invitation.wontAttend}}">We can't make it, but worry not: there will be peace in our time.</paper-checkbox>
+      <paper-checkbox checked="{{invitation.wontAttend}}"><span>[[_subjectFor(invitation)]]</span> can't make it, but worry not: there will be peace in our time.</paper-checkbox>
 
       <span class="centered">
         <paper-fab disabled="[[_computeFabDisabled(invitation.*)]]" icon="done" on-tap="_closePage"></paper-fab>
@@ -55958,6 +55958,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return !(this.invitation.wontAttend ||
         this.invitation.guest2.attending ||
         this.invitation.guest1.attending);
+    },
+
+    _isSoloParty: function(invitation) {
+      return !invitation.guest2.name;
+    },
+
+    _subjectFor: function(invitation) {
+      if (this._isSoloParty(invitation)) {
+        return 'I'
+      }
+
+      return 'We';
     }
   });
 </script>
